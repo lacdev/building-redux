@@ -11,9 +11,40 @@ function createStore() {
 
   let state
 
+  // Listeners is an array of functions.
+  // Whenever suscribe is called, a new function will be stored
+  // on the array of listeners.
+
+  // Whenever we update the state, we will loop into all of our
+  // Listeners and invoke every single function that is inside
+  // of the listeners array, listen the state might changed.
+
+  let listeners = []
+
   const getState = () => state
+
+  const subscribe = (listener) => {
+    listeners.push(listener)
+
+    // unsuscribing from the listeners array
+
+    return () => {
+      listeners = listeners.filter((l) => l !== listener)
+    }
+  }
 
   return {
     getState,
+    subscribe,
   }
 }
+
+// Create the store
+
+const store = createStore()
+
+// Whenever the state changes, we use the passed function on the
+// suscribe method.
+// The user can call suscribe as many times as he want.
+
+const unsuscribe = store.subscribe(() => {})
