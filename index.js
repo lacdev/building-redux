@@ -74,14 +74,10 @@ function reducer(state = [], action) {
   return state
 }
 
+// This is our main function where we will be creating a new store.
+
 function createStore(reducer) {
-  /*
-
-  This is our main function where we will be creating a new store.
-
-  We start with our state uninitialized or undefined.
-  
-  */
+  //We start with our state uninitialized or undefined.
 
   let state
 
