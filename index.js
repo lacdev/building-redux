@@ -101,12 +101,12 @@ function createStore(reducer) {
 
   */
 
-  const suscribe = (listener) => {
+  const subscribe = (listener) => {
     listeners.push(listener)
 
     return () => {
       listeners = listeners.filter(
-        (currentListener) => currentListener !== listener
+        (listenersItem) => listenersItem !== listener
       )
     }
   }
@@ -146,7 +146,7 @@ function createStore(reducer) {
 
   return {
     getState,
-    suscribe,
+    subscribe,
     dispatch,
   }
 }
