@@ -194,3 +194,9 @@ store.dispatch({
     complete: 'false',
   },
 })
+
+// Example of the Listen and unsuscribe method ( when invoked )
+
+const unsuscribe = store.subscribe(() =>
+  console.log('The new state is: ', store.getState())
+)
