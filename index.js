@@ -66,7 +66,18 @@ Responsible for getting us to the next state of our application based on the spe
 
 */
 
-function reducer(state = [], action) {
+function goals(state = [], action) {
+  switch (action.type) {
+    case 'ADD_GOAL':
+      return state.concat([action.goal])
+    case 'REMOVE_GOAL':
+      return state.filter((goal) => goal.id !== action.id)
+    default:
+      return state
+  }
+}
+
+function todos(state = [], action) {
   switch (action.type) {
     case 'ADD_TODO':
       return state.concat([action.todo])
@@ -80,6 +91,13 @@ function reducer(state = [], action) {
       )
     default:
       return state
+  }
+}
+
+function app(state = {}, action) {
+  return {
+    todos: todos(state.todos, action),
+    goals: goals(state.goals, action),
   }
 }
 
@@ -158,7 +176,7 @@ function createStore(reducer) {
 
 // Create the store object and give our reducer function as an argument.
 
-const store = createStore(reducer)
+const store = createStore(app)
 
 /* 
 
