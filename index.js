@@ -1,7 +1,7 @@
 /* 
 
 The store should have 4 parts
-    1. The state of our entire applicationm
+    1. The state of our entire application
     2. Get the state
     3. Listen to changes on the state
     4. Update the state
