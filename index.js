@@ -47,61 +47,8 @@ with it with the update methods.
 
 */
 
-/* 
-
-Characteristics of a Pure Function 
-
-1) They always return the same result if the same arguments are
-passed in.
-2) They depend only on the arguments passed into them. They only care about their own scope and the arguments being passed into them.
-3) Never produce any side effects. i.e. Making AJAX Request, they should never do anything with the DOM. 
-
-*/
-
-/* 
-
-Reducer function
-
-Responsible for getting us to the next state of our application based on the specific action we pass into it. 
-
-*/
-
-function goals(state = [], action) {
-  switch (action.type) {
-    case 'ADD_GOAL':
-      return state.concat([action.goal])
-    case 'REMOVE_GOAL':
-      return state.filter((goal) => goal.id !== action.id)
-    default:
-      return state
-  }
-}
-
-function todos(state = [], action) {
-  switch (action.type) {
-    case 'ADD_TODO':
-      return state.concat([action.todo])
-    case 'REMOVE_TODO':
-      return state.filter((todo) => todo.id !== action.id)
-    case 'TOGGLE_TODO':
-      return state.map((todo) =>
-        todo.id !== action.id
-          ? todo
-          : Object.assign({}, todo, { complete: !todo.complete })
-      )
-    default:
-      return state
-  }
-}
-
-function app(state = {}, action) {
-  return {
-    todos: todos(state.todos, action),
-    goals: goals(state.goals, action),
-  }
-}
-
 // This is our main function where we will be creating a new store.
+// Library code
 
 function createStore(reducer) {
   //We start with our state uninitialized or undefined.
@@ -174,6 +121,108 @@ function createStore(reducer) {
   }
 }
 
+/* 
+
+Characteristics of a Pure Function 
+
+1) They always return the same result if the same arguments are
+passed in.
+2) They depend only on the arguments passed into them. They only care about their own scope and the arguments being passed into them.
+3) Never produce any side effects. i.e. Making AJAX Request, they should never do anything with the DOM. 
+
+*/
+
+/* 
+
+Reducer function
+
+Responsible for getting us to the next state of our application based on the specific action we pass into it. 
+
+*/
+
+// App code
+
+// Todos constants
+const ADD_TODO = 'ADD_TODO'
+const REMOVE_TODO = 'REMOVE_TODO'
+const TOGGLE_TODO = 'TOGGLE_TODO'
+
+// Goals constants
+const ADD_GOAL = 'ADD_GOAL'
+const REMOVE_GOAL = 'REMOVE_GOAL'
+
+// Functions for each actions ( Action creators )
+
+function addTodoAction(todo) {
+  return {
+    type: ADD_TODO,
+    todo,
+  }
+}
+
+function removeTodoAction(id) {
+  return {
+    type: REMOVE_TODO,
+    id,
+  }
+}
+
+function toggleTodoAction(id) {
+  return {
+    type: TOGGLE_TODO,
+    id,
+  }
+}
+
+function addGoalAction(goal) {
+  return {
+    type: ADD_GOAL,
+    goal,
+  }
+}
+
+function removeGoalAction(id) {
+  return {
+    type: REMOVE_GOAL,
+    id,
+  }
+}
+
+function goals(state = [], action) {
+  switch (action.type) {
+    case ADD_GOAL:
+      return state.concat([action.goal])
+    case REMOVE_GOAL:
+      return state.filter((goal) => goal.id !== action.id)
+    default:
+      return state
+  }
+}
+
+function todos(state = [], action) {
+  switch (action.type) {
+    case ADD_TODO:
+      return state.concat([action.todo])
+    case REMOVE_TODO:
+      return state.filter((todo) => todo.id !== action.id)
+    case TOGGLE_TODO:
+      return state.map((todo) =>
+        todo.id !== action.id
+          ? todo
+          : Object.assign({}, todo, { complete: !todo.complete })
+      )
+    default:
+      return state
+  }
+}
+
+function app(state = {}, action) {
+  return {
+    todos: todos(state.todos, action),
+    goals: goals(state.goals, action),
+  }
+}
+
 // Create the store object and give our reducer function as an argument.
 
 const store = createStore(app)
@@ -186,14 +235,26 @@ mentioned, dispatch takes an action object
 
 */
 
-store.dispatch({
-  type: 'ADD_TODO',
-  todo: {
+store.dispatch(
+  addTodoAction({
     id: 0,
-    name: 'Learn Redux',
-    complete: 'false',
-  },
-})
+    name: 'Walk the dog',
+    complete: false,
+  })
+)
+
+store.dispatch(removeTodoAction(0))
+
+store.dispatch(toggleTodoAction(1))
+
+store.dispatch(
+  addGoalAction({
+    id: 0,
+    name: 'Lose 10 kilograms.',
+  })
+)
+
+store.dispatch(removeGoalAction(0))
 
 // Example of the Listen and unsuscribe method ( when invoked )
 
