@@ -12,21 +12,10 @@ The store should have 4 parts
 
 Actions objects
 
-Represent a type of event that are going to be occuring inside of our application that eventually is going to change the state of our store.
+Represent a type of event that are going to be occurring inside of our application that eventually is going to change the state of our store.
 
 Action is  just an object which represent a specific event or action which is going to occur in our App which
 eventually is going to change the state in our store. 
-
-An example of an action object passed into our dispatch method.
-
-{
-  type: 'ADD_TODO',
-  todo: {
-    id: 0,
-    name: 'Learn Redux',
-    complete: 'false'
-  }
-}
 
 */
 
@@ -34,7 +23,7 @@ An example of an action object passed into our dispatch method.
 
 Listeners is an array of functions.
 
-Whenever suscribe is called, a new function will be stored
+Whenever subscribe is called, a new function will be stored
 on the array of listeners.
 
 Whenever we update the state, we will loop into all of our
@@ -65,9 +54,9 @@ function createStore(reducer) {
 
   /* 
   
-  Suscribe method will add a new function to the listeners array these functions will be executed whenever there are changes in the state. 
+  Subscribe method will add a new function to the listeners array these functions will be executed whenever there are changes in the state. 
   
-  It will also allow us to unsuscribe from listening by returning a new array without the targeted function on it.
+  It will also allow us to unsubscribe from listening by returning a new array without the targeted function on it.
 
   */
 
@@ -143,6 +132,7 @@ Responsible for getting us to the next state of our application based on the spe
 // App code
 
 // Todos constants
+
 const ADD_TODO = 'ADD_TODO'
 const REMOVE_TODO = 'REMOVE_TODO'
 const TOGGLE_TODO = 'TOGGLE_TODO'
@@ -235,29 +225,104 @@ mentioned, dispatch takes an action object
 
 */
 
-store.dispatch(
-  addTodoAction({
-    id: 0,
-    name: 'Walk the dog',
-    complete: false,
+// These are the functions that will be invoked whenever the state of our store changes.
+
+const unsubscribe = store.subscribe(() => {
+  const { goals, todos } = store.getState()
+
+  const goalsList = document.getElementById('goals')
+  const todosList = document.getElementById('todos')
+
+  removeElementsFrom(goalsList)
+  removeElementsFrom(todosList)
+
+  goals.forEach(addGoalToDOM)
+  todos.forEach(addTodoToDOM)
+})
+
+// DOM Code
+
+// Function to remove elements before adding a new one from both containers.
+
+function removeElementsFrom(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild)
+  }
+}
+
+function addTodoToDOM(todo) {
+  const node = document.createElement('li')
+  const text = document.createTextNode(todo.name)
+
+  const removeButton = createRemoveButton(() => {
+    store.dispatch(removeTodoAction(todo.id))
   })
-)
 
-store.dispatch(removeTodoAction(0))
+  node.appendChild(text)
+  node.appendChild(removeButton)
 
-store.dispatch(toggleTodoAction(1))
-
-store.dispatch(
-  addGoalAction({
-    id: 0,
-    name: 'Lose 10 kilograms.',
+  node.style.textDecoration = todo.complete ? 'line-through' : 'none'
+  node.addEventListener('click', () => {
+    store.dispatch(toggleTodoAction(todo.id))
   })
-)
+  document.getElementById('todos').appendChild(node)
+}
 
-store.dispatch(removeGoalAction(0))
+function addGoalToDOM(goal) {
+  const node = document.createElement('li')
+  const text = document.createTextNode(goal.name)
+  const removeButton = createRemoveButton(() => {
+    store.dispatch(removeGoalAction(goal.id))
+  })
 
-// Example of the Listen and unsuscribe method ( when invoked )
+  node.appendChild(text)
+  node.appendChild(removeButton)
 
-const unsuscribe = store.subscribe(() =>
-  console.log('The new state is: ', store.getState())
-)
+  document.getElementById('goals').appendChild(node)
+}
+
+function createRemoveButton(onClickFn) {
+  const removeButton = document.createElement('button')
+  removeButton.textContent = 'X'
+  removeButton.addEventListener('click', onClickFn)
+
+  return removeButton
+}
+
+function generateId() {
+  return (
+    Math.random().toString(36).substring(2) + new Date().getTime().toString(36)
+  )
+}
+
+function addTodo() {
+  const input = document.querySelector('#todo')
+  const name = input.value
+  input.value = ''
+
+  store.dispatch(
+    addTodoAction({
+      id: generateId(),
+      name,
+      complete: false,
+    })
+  )
+}
+
+function addGoal() {
+  const input = document.querySelector('#goal')
+  const name = input.value
+  input.value = ''
+
+  store.dispatch(
+    addGoalAction({
+      id: generateId(),
+      name,
+    })
+  )
+}
+
+const todoButton = document.querySelector('#todoButton')
+todoButton.addEventListener('click', addTodo)
+const goalButton = document.querySelector('#goalButton')
+goalButton.addEventListener('click', addGoal)
