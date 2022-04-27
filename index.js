@@ -180,6 +180,8 @@ function removeGoalAction(id) {
   }
 }
 
+// Our reducers that will create a piece in our global state and access it later on and perform changes on it based on actions.
+
 function goals(state = [], action) {
   switch (action.type) {
     case ADD_GOAL:
