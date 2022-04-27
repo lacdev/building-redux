@@ -116,7 +116,8 @@ Characteristics of a Pure Function
 
 1) They always return the same result if the same arguments are
 passed in.
-2) They depend only on the arguments passed into them. They only care about their own scope and the arguments being passed into them.
+2) They depend only on the arguments passed into them. 
+They only care about their own scope and the arguments being passed into them.
 3) Never produce any side effects. i.e. Making AJAX Request, they should never do anything with the DOM. 
 
 */
@@ -138,10 +139,11 @@ const REMOVE_TODO = 'REMOVE_TODO'
 const TOGGLE_TODO = 'TOGGLE_TODO'
 
 // Goals constants
+
 const ADD_GOAL = 'ADD_GOAL'
 const REMOVE_GOAL = 'REMOVE_GOAL'
 
-// Functions for each actions ( Action creators )
+// Functions for each actions ( Action creators ) that will return our action objects.
 
 function addTodoAction(todo) {
   return {
@@ -206,6 +208,10 @@ function todos(state = [], action) {
   }
 }
 
+// Redux.combineReducers({})
+
+// The main reducer function we are going to give as an argument, an abstraction of combineReducers.
+
 function app(state = {}, action) {
   return {
     todos: todos(state.todos, action),
@@ -214,6 +220,20 @@ function app(state = {}, action) {
 }
 
 // Create the store object and give our reducer function as an argument.
+
+/* each property passed to the combineReducers function is a reducer that we defined previously
+ 
+  We can think of this like: 
+ 
+ "create a todos property in our state and use the todos reducer"
+ "create a goals property in our state and use the goals reducer"  
+
+ const store = Redux.createStore(Redux.combineReducers({
+    todos, 
+    goals  
+ }))
+
+Redux.createStore() */
 
 const store = createStore(app)
 
