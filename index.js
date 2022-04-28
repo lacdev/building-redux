@@ -180,6 +180,57 @@ function removeGoalAction(id) {
   }
 }
 
+// ES6 Version middleware
+
+const checker = (store) => (next) => (action) => {
+  // here is where all the middleware is going to be.
+  // const isBitcoinSubstringPresent =
+  //   action.todo.name.toLowerCase().indexOf('bitcoin') !== 1
+
+  if (action.type === ADD_TODO && action.todo.name.includes('bitcoin')) {
+    return alert("Nope. It's a bad idea.")
+  }
+
+  if (action.type === ADD_GOAL && action.goal.name.includes('bitcoin')) {
+    return alert("Nope. It's a bad idea.")
+  }
+
+  return next(action)
+}
+
+// Logger Middleware for Redux (apply middleware)
+
+const logger = (store) => (next) => (action) => {
+  console.group(action.type)
+  console.log('The action: ', action)
+  const results = next(action)
+  console.log('The new state: ', store.getState())
+  console.groupEnd()
+  return results
+}
+
+// Our first middleware (currying) (Non ES6)
+
+// function checker(store) {
+//   return function (next) {
+//     return function (action) {
+//       // here is where all the middleware is going to be.
+//       // const isBitcoinSubstringPresent =
+//       //   action.todo.name.toLowerCase().indexOf('bitcoin') !== 1
+
+//       if (action.type === ADD_TODO && action.todo.name.includes('bitcoin')) {
+//         return alert("Nope. It's a bad idea.")
+//       }
+
+//       if (action.type === ADD_GOAL && action.goal.name.includes('bitcoin')) {
+//         return alert("Nope. It's a bad idea.")
+//       }
+
+//       return next(action)
+//     }
+//   }
+// }
+
 // Our reducers that will create a piece in our global state and access it later on and perform changes on it based on actions.
 
 function goals(state = [], action) {
@@ -233,11 +284,19 @@ function app(state = {}, action) {
  const store = Redux.createStore(Redux.combineReducers({
     todos, 
     goals  
- }))
+ }), Redux.applyMiddleware(checker))
 
 Redux.createStore() */
 
-const store = createStore(app)
+// const store = createStore(app)
+
+const store = Redux.createStore(
+  Redux.combineReducers({
+    todos,
+    goals,
+  }),
+  Redux.applyMiddleware(checker, logger)
+)
 
 /* 
 
